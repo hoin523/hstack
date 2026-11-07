@@ -20,6 +20,10 @@
 - Keep browser work sequential unless isolation is proven for safe parallel execution.
 - Do not perform payment, external messaging, or irreversible data changes.
 - Never claim full success when evidence or coverage is incomplete.
+- Do not stage, commit, upload, or publish QA artifacts unless the user requests it.
+- Report requirement and scenario execution coverage percentages; blocked and untested scenarios count as uncovered.
+- For completed scenarios, attach screenshot evidence; for blocked or untested scenarios without safe evidence, record why no screenshot exists.
+- Avoid retaining screenshots with sensitive production data; use approved redaction or report the evidence limitation.
 
 ## Review Focus
 
@@ -71,9 +75,10 @@
 - Consumes: Scenario records and screenshots produced by the two test procedures.
 - Produces: A Markdown report with summary, scope, coverage, scenario outcomes, defect records, evidence links, blockers, and limitations.
 
-- [ ] Define a report template with test run metadata, executive summary, and requirement coverage.
+- [ ] Define a report template with test run metadata, executive summary, and explicit requirement and scenario coverage formulas.
 - [ ] Add per-scenario fields for ID, source, priority, steps, expected/observed result, status, and evidence.
 - [ ] Add defect fields for severity, reproducibility, and concise reproduction steps.
+- [ ] Add precedence rules for overall disposition so findings and incomplete coverage cannot yield a false-ready report.
 - [ ] Add a rule that missing evidence or unfinished coverage prevents a full-pass summary.
 - [ ] Check that every screenshot can be traced to a scenario and viewport.
 

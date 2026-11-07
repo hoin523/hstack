@@ -32,7 +32,11 @@ Build a reusable Codex skill for PMs who need evidence-based QA of a deployed we
 
 ## Report contract
 
-Each scenario records an ID, source (`requirement` or `exploratory`), priority, steps, expected result when specified, observed result, status, and evidence path. Defects additionally record severity, reproducibility, and concise reproduction steps. Inferred expectations must be labeled as inferred.
+Each scenario records an ID, source (`requirement` or `exploratory`), priority, steps, expected result when specified, observed result, status, and evidence. Every `PASS` or `FAIL` needs a screenshot path, exact URL, and viewport unless sensitive content makes safe retention impossible; in that case record `none`, reason, URL, and viewport, and use `Inconclusive` if required evidence is insufficient. For `BLOCKED` or `NOT TESTED`, record a screenshot when safe and available; otherwise record `none` with the reason and the relevant URL or blocker. For an exploratory `PASS`, the report must say that no issue was observed only within the recorded probe and timebox; it must not imply all states passed. Avoid capturing sensitive production data. If the screen contains sensitive data, use test data or approved redaction; otherwise do not retain that screenshot and report the evidence limitation. Defects additionally record severity, reproducibility, and concise reproduction steps. Inferred expectations must be labeled as inferred. Do not stage, commit, upload, or publish reports or screenshots unless the user requests it.
+
+Apply overall-disposition precedence in this order. `Not ready` wins if any in-scope requirement fails or a confirmed P0/P1 defect remains. Otherwise `Inconclusive` applies when explicit requirements are absent, any in-scope scenario is blocked or not tested, or required evidence is insufficient. Otherwise use `Ready with issues` when P2/P3 defects or usability findings remain. Use `Ready` only when all in-scope requirements pass with evidence, the exploratory charter is complete, and no unresolved defect remains.
+
+Report requirement coverage as the number of in-scope source requirements whose mapped scenarios are all executed (`PASS` or `FAIL`) divided by the total in-scope source requirements. Report scenario execution coverage as (`PASS` + `FAIL`) divided by the total in-scope scenarios. `BLOCKED` and `NOT TESTED` count as uncovered. When no requirement source exists, requirement coverage is `N/A` and disposition is `Inconclusive`.
 
 ## Repository shape
 
