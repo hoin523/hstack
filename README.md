@@ -1,30 +1,18 @@
 # hstack
 
-Evidence-based release QA for deployed web applications. hstack combines pstack's repeatable verification approach with gstack-browse's Chromium control and screenshot capture. It runs both acceptance-criteria checks and a bounded exploratory pass, then writes a Korean-friendly Markdown report with evidence and reproduction steps.
+PM-oriented web release QA that builds reusable verification procedures, checks deployed user flows with browser evidence, and keeps the procedures current as the application changes.
 
-## What it does
+hstack combines pstack's repeatable verification-profile and feature-map approach with gstack-browse's Chromium control and screenshot capture. It keeps deterministic application tests in their existing harness, adds a real browser pass for visible behavior, and produces a stakeholder-ready Markdown report.
 
-- Maps each supplied acceptance criterion to observable scenarios.
-- Runs a separate exploratory pass for common navigation, form, state, responsive, and keyboard-visible problems.
-- Captures screenshots for important states and every failure.
-- Produces a PM report with coverage, `PASS` / `FAIL` / `BLOCKED` / `NOT TESTED` results, defects, evidence, blockers, and limitations.
-- Uses gstack-browse as its browser backend. It does not open a dashboard unless requested.
+## Three workflows
 
-hstack is an instruction-only Codex skill. It does not replace Playwright's test suite, CI, Allure, or a test-management system. pstack is a source of workflow ideas; hstack does not claim turnkey pstack or Cursor integration.
-
-## Requirements
-
-- Codex with Agent Skills available.
-- gstack-browse installed and available to the same Codex workspace or user profile.
-- A deployed URL and an allowed test environment.
-- Acceptance criteria or requirements for requirement-based coverage.
-- An approved QA account and seeded test data for flows that require sign-in or state changes.
-
-If gstack-browse is missing, install or enable it using the [gstack instructions](https://github.com/garrytan/gstack/tree/main/browse). hstack stops instead of silently switching browser tools.
+1. **Set up a project profile:** inspect the application routes, roles, existing tests and safe test data; create `.agents/skills/verify-<app>/` with launch/doctor/drive/evidence/cleanup instructions and an indexed feature map. The profile is marked verified only after a safe end-to-end feature pass and evidence-retention check. If prerequisites are missing, hstack leaves a clear draft and blocker.
+2. **Run release QA:** connect requirements to stable feature IDs, run the relevant existing deterministic checks, then verify the deployed user experience with gstack-browse. Capture screenshots for scenario outcomes, do a bounded exploratory pass, clean up approved disposable data, and write an evidence-linked report.
+3. **Maintain the profile:** compare every mapped feature against current routes, source, and tests; live-check every mapped feature; update only verification-profile files; report `clean`, `changed`, or `blocked`.
 
 ## Install hstack
 
-Codex discovers project skills in `.agents/skills/` and user skills in `~/.agents/skills/`. Copy the `hstack` folder into one of those locations.
+hstack itself is an instruction-only Codex skill. Install the `.agents/skills/hstack/` folder in a project or user skills directory. Generated application profiles are separate and live inside the application repository.
 
 For one project:
 
@@ -40,24 +28,41 @@ mkdir -p ~/.agents/skills
 cp -R .agents/skills/hstack ~/.agents/skills/hstack
 ```
 
-Then ask Codex to use hstack. If it does not appear, start a new Codex session and check that the skill folder contains `SKILL.md`.
+Codex discovers project skills in `.agents/skills/` and user skills in `~/.agents/skills/`. If hstack does not appear, start a new Codex session and confirm `SKILL.md` exists in the copied folder.
 
-## Run a QA pass
+## Example requests
 
-Provide the URL, release identifier, acceptance criteria, approved test account/data, and report destination when known.
+### Create a reusable verification profile
+
+```text
+Use hstack to prepare a reusable verification profile for this app.
+Map the user-visible features and roles, reuse the existing test harness,
+and prove one safe end-to-end feature in staging. Do not change product code.
+```
+
+### Check a release
 
 ```text
 Use hstack on https://staging.example.com for release 2026.11.08-rc1.
-Check the attached acceptance criteria and run a bounded exploratory pass too.
-Use the approved QA account and seeded test records only.
-Save the Korean result report and screenshots in qa-reports/.
+Check the attached acceptance criteria, run the relevant existing tests,
+and do a bounded exploratory pass with screenshots. Use only the approved
+QA account and seeded records. Save a Korean report in qa-reports/.
 ```
 
-The skill records assumptions separately from supplied criteria. If access, test data, or a safe way to perform an action is missing, the affected scenario is marked `BLOCKED` or `NOT TESTED` rather than being treated as a pass. If no explicit requirement source is available, hstack can still run safe exploratory checks, but the overall disposition remains `Inconclusive`.
+### Maintain a profile after changes
 
-## Results
+```text
+Use hstack to maintain this app's verification profile after the latest changes.
+Compare every mapped feature with current routes and tests, live-check each
+feature in staging, and update only the verification profile. Report clean,
+changed, or blocked.
+```
 
-Each run is stored under `qa-reports/<run-id>/` in the active project by default:
+## Browser and evidence
+
+Live web QA uses gstack-browse and its `browse` CLI. hstack reads the installed browse instructions and setup before opening the target; it does not silently switch browser tools. A deployed browser pass is separate evidence from a passing Playwright or other deterministic test. Screenshots, URL, viewport, action, and scenario ID are linked in each report result. Sensitive production content is not retained.
+
+Each release report is stored under `qa-reports/<run-id>/` by default:
 
 ```text
 qa-reports/<run-id>/
@@ -65,19 +70,18 @@ qa-reports/<run-id>/
 └── screenshots/
 ```
 
-The report links each screenshot to a scenario, URL, and viewport. `PASS` requires an observed expected result with evidence. `FAIL` records contradictory behavior or a supported defect. `BLOCKED` records a missing prerequisite, unsafe action, or environment problem. `NOT TESTED` records excluded or unreached work. An exploratory pass is bounded and never represents exhaustive coverage. hstack keeps reports and screenshots local and does not stage, commit, upload, or publish them automatically.
+Reports and screenshots stay local and are not staged, committed, uploaded, or published automatically. The release disposition is `Not ready`, `Inconclusive`, `Ready with issues`, or `Ready`, based on in-scope requirements, blockers, retained evidence, and unresolved defects. Exploratory QA is bounded; it does not claim exhaustive coverage.
 
-## Local source checkouts
+## Requirements and limits
 
-These commands fetch upstream sources separately. The pstack directory is a sparse checkout of the `pstack/` plugin inside `cursor/plugins`.
+- Codex with Agent Skills available.
+- gstack-browse installed and available to the same workspace or user profile for live browser QA.
+- For release QA: a deployed URL and allowed environment. Sign-in or state-changing flows also need an approved test identity and disposable data.
+- For requirement coverage: acceptance criteria or another explicit source of truth. Without it, safe exploratory checks can run, but the overall disposition is `Inconclusive`.
+- hstack does not replace the application's test suite, CI, Allure, or a test-management system. It orchestrates and connects their evidence with user-visible browser checks.
 
-```bash
-git clone --depth 1 https://github.com/garrytan/gstack.git gstack
-git clone --filter=blob:none --no-checkout https://github.com/cursor/plugins.git pstack
-git clone https://github.com/hoin523/hstack.git hstack
-cd pstack
-git sparse-checkout init --cone
-git sparse-checkout set pstack
-```
+If gstack-browse is missing, install or enable it using the [gstack instructions](https://github.com/garrytan/gstack/tree/main/browse). hstack stops rather than silently changing browser tools.
 
-Upstream references: [gstack browse](https://github.com/garrytan/gstack/tree/main/browse) and [pstack](https://github.com/cursor/plugins/tree/main/pstack).
+## Source repositories
+
+Upstream workflow references: [gstack browse](https://github.com/garrytan/gstack/tree/main/browse) and [pstack](https://github.com/cursor/plugins/tree/main/pstack).

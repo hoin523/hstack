@@ -8,6 +8,8 @@ Before interacting, record the target area, user role, starting state, and a tim
 
 Keep observations with source `exploratory` and IDs such as `EXP-001`. Do not mix inferred expectations into requirement coverage. If a likely user expectation is not specified, label it `Inferred:` and report it as an exploratory finding or question, not a failed acceptance criterion.
 
+When a project feature map is available, record the feature/subfeature ID for each probe. Log new or changed user surfaces that have no feature-map entry as a profile maintenance gap; do not silently expand release scope.
+
 ## Run one risk-focused pass
 
 Within the user's requested scope, inspect the following where the interface exposes them. For each probe, write a visible observation target before acting. An exploratory `PASS` means only that the target behaved as expected during the recorded steps; it does not prove unvisited states are sound.
@@ -24,6 +26,7 @@ Stay on the requested site and its same-origin routes unless the test requires a
 ## Evidence and findings
 
 - Capture a screenshot when a state is important to the user journey, when the layout is visibly broken, or when a defect is found. Use the gstack-browse screenshot and responsive commands as documented in its installed skill.
+- Keep screenshots and diagnostics from deterministic harness runs distinct from gstack-browse captures. Link both when they support different parts of the same observation.
 - Record the scenario ID, URL, viewport, action immediately before the capture, and what the image demonstrates.
 - A visual concern without a stated acceptance criterion is a usability suggestion unless it causes an observable function to fail. Label the reasoning as inferred.
 - Reproduce a suspected defect once from a clean or known starting state when safe. If it is not reproducible, report the original observation with confidence marked low; do not present it as confirmed.

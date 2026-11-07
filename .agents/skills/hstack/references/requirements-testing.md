@@ -9,6 +9,7 @@ Use this reference for scenarios derived from a PRD, acceptance criteria, user s
 3. Write one primary observable outcome per scenario. Include preconditions, action steps, expected result, priority, and relevant viewport or account role.
 4. Keep supplied expectations separate from assumptions. Prefix an inferred expectation with `Inferred:` and include its basis.
 5. Before execution, check that every in-scope requirement maps to at least one scenario. Mark an uncovered requirement `NOT TESTED` with the reason.
+6. When a project feature map exists, attach its stable feature/subfeature ID to each scenario. Also record requirements with no matching feature ID as a coverage gap; the feature map does not replace the requirement source.
 
 ## Scenario record
 
@@ -26,6 +27,7 @@ Use the shared record shape from `report-template.md`:
 | Observed | What the rendered application actually did |
 | Status | `PASS`, `FAIL`, `BLOCKED`, or `NOT TESTED` |
 | Evidence | Screenshot path(s), URL, and viewport |
+| Feature link | Project feature/subfeature ID(s), or `unmapped` |
 
 Priorities are triage aids, not proof of severity. `P0` blocks a core release path or causes severe user/data harm. `P1` breaks an important user journey with no reasonable workaround. `P2` impairs a secondary flow or has a workaround. `P3` is a minor defect or polish issue.
 
